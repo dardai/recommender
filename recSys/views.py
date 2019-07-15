@@ -11,6 +11,6 @@ def test_index(request):
     #    message = 'search ' + request.GET['q']
     #else:
     #    message = '空表单'
-    return JsonResponse({'res':1,'name':'hhhhhh'},json_dumps_params={'ensure_ascii':False})
+    return JsonResponse({'res':1,'name':'推荐系统'},json_dumps_params={'ensure_ascii':False})
     #return HttpResponse(message)
    # return  render(request,"recommend/testIndex.html",{"rec":blogs})
