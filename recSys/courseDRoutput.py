@@ -1,7 +1,7 @@
 import pymysql
 
 
-class baseio:
+class DatabaseIo:
     db = pymysql.connect("localhost", "root", "123456", "learningrecommend")
 
     def open(self):
