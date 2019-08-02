@@ -1,6 +1,5 @@
 import pymysql
 
-
 class DatabaseIo:
 
     def __init__(self, info:dict):

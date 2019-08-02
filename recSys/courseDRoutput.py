@@ -1,6 +1,5 @@
 import pymysql
 
-
 class DatabaseIo:
     db = pymysql.connect("localhost", "root", "123456", "learningrecommend")
 
