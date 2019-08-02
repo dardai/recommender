@@ -30,7 +30,6 @@ class DatabaseIo:
         self.db.close()
 
 
-sql = """select * 
-         from course_dr"""
+
 
 
