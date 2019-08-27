@@ -1,1 +1,1 @@
-import MySQLdb
+import pymysql
