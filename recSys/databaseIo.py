@@ -6,13 +6,24 @@ class DatabaseIo:
         self.info = {'address':info['address'],'username':info['username'],'passwd':info['passwd'],'basename':info['basename']}
 
     def open(self):
-        self.db = pymysql.connect("localhost", "root", "123456", "learningrecommend")
+        self.db = pymysql.connect("192.168.0.187", "root", "root123", "learningrecommend")
         self.cursor = self.db.cursor()
 
     def write(self, sql):
         try:
             self.cursor.execute(sql)
             self.db.commit()
+        except:
+            self.db.rollback()
+            print('Error: unable to write data')
+
+    def writeMany(self, sql,li):
+        print('进入many')
+        try:
+            print('进入try')
+            n = self.cursor.executemany(sql,li)
+            self.db.commit()
+            return n
         except:
             self.db.rollback()
             print('Error: unable to write data')
