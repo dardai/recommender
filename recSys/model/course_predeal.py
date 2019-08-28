@@ -6,10 +6,10 @@ pymysql.install_as_MySQLdb()
 #先引入包名才能引入类
 from recSys import databaseIo
 
-info = {'address':'localhost',
+info = {'address':'192.168.0.187',
         'username':'root',
-        'passwd':'gnahey907',
-        'basename':'learningrecommendsystem'}
+        'passwd':'root123',
+        'basename':'learningrecommend'}
 
 ddio = databaseIo.DatabaseIo(info)
 
