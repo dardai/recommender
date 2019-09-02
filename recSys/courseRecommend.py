@@ -1,4 +1,4 @@
-#周洋涛-2019.8
+#周洋涛-2019.9
 #本代码实现了二部图算法，并将产生的推荐结果存入到course_model表中
 #import databaseIo
 from decimal import *
