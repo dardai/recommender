@@ -1,3 +1,5 @@
+#周洋涛-2019.8
+#本代码实现了协同过滤算法
 import numpy
 from numpy import *
 import csv

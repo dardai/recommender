@@ -1,58 +1,37 @@
-import databaseIo
+#周洋涛-2019.8
+#本代码实现了二部图算法，并将产生的推荐结果存入到course_model表中
+#import databaseIo
+from decimal import *
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 import pandas as pd
 import numpy as nm
 import random
 import pymysql
+pymysql.install_as_MySQLdb()
+#先引入包名才能引入类
+from recSys import databaseIo
+import pymysql
 
 # 定义将多条数据存入数据库操作
 '''
-输入：db_name数据库的名字
-      table_name要存储的数据表名
-      data_list存储的数据，以列表的形式传入参数格式如[[1,2,3],[2,3,4],.....,[4,5,6]]
+输入：data_list存储的数据，以元组的形式传入参数格式如((1,2,3),(2,3,4),.....,(4,5,6))
+结果：将数据批量存入数据库
 '''
-def insertData(db_name, table_name, data_list):
-    def getcon(db_name):
-        # host是选择连接哪的数据库localhost是本地数据库，port是端口号默认3306
-        # user是使用的人的身份，root是管理员身份，passwd是密码。db是数据库的名称，charset是编码格式
-        conn = pymysql.connect(host="localhost", port=3306, user='root', passwd='114210', db=db_name,
-                                   charset='utf8')
-        # 创建游标对象
-        cursor1 = conn.cursor()
-        return conn, cursor1
-    # 调用链接到mysql的函数，返回我们的conn和cursor1
-    conn, cursor1 = getcon(db_name)
-    # 使用pandas 读取csv文件
-    df = []
-    df = data_list
-    # 使用for循环遍历df，每条数据都是一个列表
-    # 使用counts计数一下，方便查看一共添加了多少条数据
-    counts = 0
-    for each in df:
-        # 每一条数据都应该单独添加，所以每次添加的时候都要重置一遍sql语句
-        sql = 'insert into ' + table_name + ' values('
-        # 因为每条数据都是一个列表，所以使用for循环遍历一下依次添加
-        for i, n in enumerate(each):
-            # 这个时候需要注意的是前面的数据可以直接前后加引号，最后加逗号，但是最后一条的时候不能添加逗号。
-            # 所以使用if判断一下
-            if i < (len(each) - 1):
-                # 若数据为数值型，则不用添加双引号
-                #若数据是字符串型，则改为sql = sql + '"' + str(n) + '"' + ','
-                sql = sql + str(n) + ','
+def insertData(data_list):
+    info = {'address': '192.168.0.187',
+            'username': 'root',
+            'passwd': 'root123',
+            'basename': 'learningrecommend'}
 
-            else:
-                sql = sql + str(n)
-        sql = sql + ');'
-        # print(sql)
-        # 当添加当前一条数据sql语句完成以后，需要执行并且提交一次
-        cursor1.execute(sql)
-        # 提交sql语句执行操作
-        conn.commit()
-        # 没提交一次就计数一次
-        counts += 1
-        # 使用一个输出来提示一下当前存到第几条了
-        print('成功添加了' + str(counts) + '条数据 ')
+    ddio = databaseIo.DatabaseIo(info)
+    ddio.open()
+    sql_delete = 'truncate table course_model;'
+    ddio.write(sql_delete)
+    sql_insert = """INSERT INTO course_model(id, course_index, recommend_value)
+                        VALUES (%s, %s, %s)"""
+    ddio.writeMany(sql_insert,tuple(data_list))
+    ddio.close()
 
 
 
@@ -67,30 +46,19 @@ sql_course = """select id , system_course_id from course_info"""
 sql_user = """select user_id from user_basic_info"""
 #读取course_dr的数据
 result_dr = ddio.read(sql_dr)
-#读取course_info的数据
+#读取course_info的数据htew
 result_course = ddio.read(sql_course)
 #读取user_basic_info的数据
 result_user = ddio.read(sql_user)
-#print('user')
-#print(result_user)
-#print('course')
-#print(result_course)
+ddio.close()
 course_length = len(result_course)
 user_length = len(result_user)
 range_length = len(result_dr)
-#print('dr')
-#print(range_length)
-#print('course')
-#print(course_length)
-#print('user')
-#print(user_length)
 ddio.close
 #把从course_dr中读取出来的数据以列表形式存储
 k = []
 for i1 in range(len(result_dr)):
     k.append(list(result_dr[i1]))
-#print('k')
-#print(k)
 result_list = []
 #按course_id升序排序
 result_list = sorted(k, key=lambda z: z[1])
@@ -108,13 +76,7 @@ for i3 in range(len(result_user)):
     a.append(list(result_user[i3]))
 result_list2 = []
 result_list2 = a
-#result_list1 = sorted(b, key=lambda z: z[1])
-#print('list')
-#print(result_list)
-#print('list1')
-#print(result_list1)
-#print('len result_course')
-#print(len(result_course))
+
 
 
 
@@ -167,6 +129,7 @@ testGraph = nm.zeros([course_length, user_length])
 # 创建已评价矩阵
 rated = nm.zeros([course_length, user_length])
 
+#提取出course_dr的数据
 result = []
 for j in range(range_length):
     w = []
@@ -208,11 +171,7 @@ for index, row in data.iterrows():
             gg = gg + 1
             graph[course_mdic[row[1]], int(row[0]) - 1] = 1
 
-#print('ttttttttttt')
-#print(tg)
-#print(rg)
-#print(gg)
-#print(rated)
+
 # 为资源配置矩阵做准备
 kjs = nm.zeros([course_length])
 kls = nm.zeros([user_length])
@@ -280,13 +239,15 @@ for i5 in range(len(recommend)):
         po = []
         po.append(user_mdicr[recommend[i5][0] - 1])
         po.append(course_mdicr[recommend[i5][1] - 1])
-        po.append(recommend[i5][2])
-        recommend_result.append(po)
+        #格式化推荐度的值
+        po.append(Decimal(recommend[i5][2]).quantize(Decimal('0.00000')))
+        tuple1 = tuple(po)
+        recommend_result.append(tuple1)
+tuple2 = tuple(recommend_result)
 print(recommend_result)
 print(poo)
 #将产生的推荐结果以id, course_index, recommend_value存入数据库中的course_model表中
-insertData('learningrecommend','course_model',recommend_result)
-ddio.close
+insertData(tuple2)
 # 开始求预测的准确性
 rs = nm.zeros(user_length)
 
