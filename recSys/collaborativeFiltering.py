@@ -1,5 +1,5 @@
 #周洋涛-2019.9
-#本代码实现了协同过滤算法
+#本代码实现了协同过滤算法，与二部图算法进行比较
 import numpy
 from numpy import *
 import csv
