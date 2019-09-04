@@ -1,5 +1,5 @@
 import pymysql
-
+import traceback
 class DatabaseIo:
 
     def __init__(self, info:dict):
@@ -24,9 +24,10 @@ class DatabaseIo:
             n = self.cursor.executemany(sql,li)
             self.db.commit()
             return n
-        except:
+        except Exception as e:
+            traceback.print_exc()
             self.db.rollback()
-            print('Error: unable to write data')
+#            print('Error: unable to write data')
 
     def read(self, sql):
         try:
