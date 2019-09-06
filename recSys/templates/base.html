@@ -2,12 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
+    <title>智能推荐系统</title>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        ul{
+            list-style: none;
+        }
+        .body{
+            background-color: #DDDDDD;
+            height: 900px;
+        }
+        .title{
+            height: 100px;
+            text-align: center;
+            line-height: 100px;
+            background-color: #87ceeb;
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .menu-wrapper{
+            text-align: center;
+            background-color: #DDD;
+        }
+        .menu{
+            display: flex;
+            justify-content: space-around;
+        }
+        .menu-item{
+            min-width: 100px;
+            height: 200px;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+        .menu-item > h1{
+            background-color: #87ceeb;
+            color: #fff;
+            font-size: 20px;
+            padding: 5px 20px;
+            border-top-left-radius:6px;
+            border-top-right-radius:6px;
+            border-bottom-right-radius:0;
+            border-bottom-left-radius:0;
+        }
+        .menu-item > ul{
+            margin-top: 20px;
+        }
+        .menu-item > ul > li{
+            padding-bottom: 10px;
+        }
+        .menu-item > .notice{
+            line-height: 100px;
+            text-align: center;
+        }
+        .content {
+            font-size: 20px;
+            line-height: 200px;
+            text-align: center;
+            overflow: hidden;
+            background-color: #DDD;
+        }
+        input{
+            height: 20px;
+            width: auto;
+        }
+
+
+    </style>
+
 </head>
 <body>
-    <div>
-        {% block content %}
-        {% endblock %}
+    <div id="app" class="body">
+       <el-row>
+        <el-col>
+            <div class="title">
+                <div style="float:left;margin-left:100px;">
+                    <svg t="1562585055877" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1545" width="30" height="30"><path d="M1004.8 454.4L550.4 72s-1.6 0-1.6-1.6l-1.6-1.6-1.6-1.6C524.8 54.4 496 56 476.8 72l-456 382.4c-24 19.2-25.6 54.4-4.8 76.8s57.6 25.6 80 4.8l38.4-33.6V824c0 75.2 64 137.6 142.4 137.6h84.8c32 0 57.6-24 57.6-54.4V648c0-16 12.8-27.2 28.8-27.2h128c16 0 28.8 12.8 28.8 27.2v252.8c0 3.2 0 8 1.6 11.2l1.6 6.4c4.8 25.6 28.8 43.2 56 43.2h83.2c78.4 0 142.4-62.4 142.4-137.6V504l38.4 33.6c11.2 9.6 24 12.8 36.8 12.8 16 0 32-6.4 43.2-19.2 22.4-20.8 20.8-56-3.2-76.8z" fill="#333333" p-id="1546"></path></svg>
+                </div>
+                <div style="margin-right: 100px;">
+                    智能教学平台
+                </div>
+            </div>
+        </el-col>
+    </el-row>
+    <!--输入-->
+    <div class="content">
+        <form method="post" action="save.php" align="center" >
+            <label for="username">用户名：</label>
+            <input type="text" name="username" id="username" value="请输入用户名" />
+            &nbsp &nbsp
+            <input  type="submit" name="submit" value="推荐" style="width:50px;height:30px;color: #bbb3ff"/><br/>
+        </form>
     </div>
+
+    <!--课程表-->
+    <div class="menu-wrapper">
+        <div class="menu">
+            <div class="menu-item">
+                <h1>单课程推荐</h1>
+                <ul>
+                    <li>课程A</li>
+                    <li>课程B</li>
+                </ul>
+            </div>
+
+            <div class="menu-item">
+                <h1>组合推荐</h1>
+                <ul>
+                    <li>课程A</li>
+                    <li>课程B</li>
+                    <li>课程C</li>
+                </ul>
+            </div>
+
+            <div class="menu-item">
+                <h1>模块建设中</h1>
+                <div class="notice">
+                    新版块建设中
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+
+
 </body>
 </html>
