@@ -19,9 +19,10 @@ import pymysql
 结果：将数据批量存入数据库
 '''
 def insertData(data_list):
-    info = {'address': '192.168.0.187',
-            'username': 'root',
-            'passwd': 'root123',
+    #更改为SQL server数据库配置
+    info = {'address': '47.106.213.57',
+            'username': 'sa',
+            'passwd': 'ASElab905',
             'basename': 'learningrecommend'}
 
     ddio = databaseIo.DatabaseIo(info)
@@ -34,10 +35,10 @@ def insertData(data_list):
     ddio.close()
 
 
-
-info = {'address':'localhost',
-        'username':'root',
-        'passwd':'114210',
+#更改为SQL server
+info = {'address':'47.106.213.57',
+        'username':'sa',
+        'passwd':'ASElab905',
         'basename':'learningrecommend'}
 ddio = databaseIo.DatabaseIo(info)
 ddio.open()

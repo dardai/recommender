@@ -257,9 +257,10 @@ class CF:
 
 # -------------------------开始-------------------------------
 start = time.clock()
-info = {'address':'localhost',
-        'username':'root',
-        'passwd':'114210',
+#更改为SQL server数据库配置
+info = {'address':'47.106.213.57',
+        'username':'sa',
+        'passwd':'ASElab905',
         'basename':'learningrecommend'}
 ddio = databaseIo.DatabaseIo(info)
 ddio.open()

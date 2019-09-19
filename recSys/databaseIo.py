@@ -6,7 +6,7 @@ class DatabaseIo:
         self.info = {'address':info['address'],'username':info['username'],'passwd':info['passwd'],'basename':info['basename']}
 
     def open(self):
-        self.db = pymysql.connect("192.168.0.187", "root", "root123", "learningrecommend")
+        self.db = pymssql.connect("47.106.213.57", "sa", "ASElab905", "learningrecommend")
         self.cursor = self.db.cursor()
 
     def write(self, sql):
