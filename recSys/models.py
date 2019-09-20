@@ -9,7 +9,7 @@ from django.db import models
 
 
 class AuthGroup(models.Model):
-    name = models.CharField(unique=True, max_length=150)
+    name = models.CharField(unique=True, max_length=80)
 
     class Meta:
         managed = False
@@ -40,13 +40,13 @@ class AuthPermission(models.Model):
 class AuthUser(models.Model):
     password = models.CharField(max_length=128)
     last_login = models.DateTimeField(blank=True, null=True)
-    is_superuser = models.IntegerField()
+    is_superuser = models.BooleanField()
     username = models.CharField(unique=True, max_length=150)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=150)
     email = models.CharField(max_length=254)
-    is_staff = models.IntegerField()
-    is_active = models.IntegerField()
+    is_staff = models.BooleanField()
+    is_active = models.BooleanField()
     date_joined = models.DateTimeField()
 
     class Meta:
@@ -74,20 +74,10 @@ class AuthUserUserPermissions(models.Model):
         unique_together = (('user', 'permission'),)
 
 
-class CourseModel(models.Model):
-    id = models.IntegerField(primary_key=True)
-    course_index = models.IntegerField()
-    recommend_value = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'course_ model'
-
-
 class CourseDr(models.Model):
-    id = models.IntegerField(primary_key=True)
-    course_index = models.IntegerField()
-    recommend_value = models.IntegerField()
+    user_id = models.BigIntegerField()
+    course_index = models.BigIntegerField()
+    recommend_value = models.FloatField()
 
     class Meta:
         managed = False
@@ -97,21 +87,32 @@ class CourseDr(models.Model):
 class CourseInfo(models.Model):
     id = models.BigIntegerField(primary_key=True)
     system_course_id = models.BigIntegerField(blank=True, null=True)
-    course_name = models.CharField(max_length=100, blank=True, null=True)
-    course_differ = models.CharField(max_length=100, blank=True, null=True)
-    course_type = models.CharField(max_length=100, blank=True, null=True)
-    course_key = models.CharField(max_length=100, blank=True, null=True)
+    course_name = models.CharField(max_length=50, blank=True, null=True)
+    course_differ = models.CharField(max_length=50, blank=True, null=True)
+    course_type = models.CharField(max_length=50, blank=True, null=True)
+    course_key = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'course_info'
 
 
+class CourseModel(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    course_index = models.BigIntegerField()
+    recommend_value = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'course_model'
+        unique_together = (('id', 'course_index'),)
+
+
 class DjangoAdminLog(models.Model):
     action_time = models.DateTimeField()
     object_id = models.TextField(blank=True, null=True)
     object_repr = models.CharField(max_length=200)
-    action_flag = models.PositiveSmallIntegerField()
+    action_flag = models.SmallIntegerField()
     change_message = models.TextField()
     content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
@@ -154,8 +155,8 @@ class DjangoSession(models.Model):
 class ExamInfo(models.Model):
     id = models.IntegerField(primary_key=True)
     system_exam_id = models.IntegerField()
-    exam_key = models.CharField(max_length=100)
-    exam_name = models.CharField(max_length=100)
+    exam_key = models.CharField(max_length=50)
+    exam_name = models.CharField(max_length=50)
     exam_deadline = models.DateTimeField()
 
     class Meta:
@@ -175,9 +176,9 @@ class ExamQuestionbank(models.Model):
 class QuestionbankInfo(models.Model):
     id = models.IntegerField(primary_key=True)
     system_questionbank_id = models.IntegerField()
-    related_knowledgepoint = models.CharField(db_column='related_knowledgePoint', max_length=100)  # Field name made lowercase.
-    questionbank_key = models.CharField(max_length=100)
-    questionbank_name = models.CharField(max_length=100)
+    related_knowledgepoint = models.CharField(db_column='related_knowledgePoint', max_length=50)  # Field name made lowercase.
+    questionbank_key = models.CharField(max_length=50)
+    questionbank_name = models.CharField(max_length=50)
 
     class Meta:
         managed = False
@@ -186,8 +187,8 @@ class QuestionbankInfo(models.Model):
 
 class TaskInfo(models.Model):
     id = models.IntegerField(primary_key=True)
-    task_name = models.CharField(max_length=100)
-    task_content = models.CharField(max_length=100)
+    task_name = models.CharField(max_length=50)
+    task_content = models.CharField(max_length=50)
     task_deadline = models.DateTimeField()
     system_course_id = models.IntegerField()
 
@@ -196,45 +197,13 @@ class TaskInfo(models.Model):
         db_table = 'task_info'
 
 
-class TestDr(models.Model):
-    id = models.IntegerField(primary_key=True)
-    course_index = models.IntegerField()
-    recommend_value = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'test_dr'
-
-
-class TestInfo(models.Model):
-    id = models.IntegerField(primary_key=True)
-    system_test_id = models.IntegerField()
-    test_name = models.CharField(max_length=100)
-    test_content = models.CharField(max_length=100)
-    course_id = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'test_info'
-
-
-class TestModel(models.Model):
-    id = models.IntegerField(primary_key=True)
-    course_index = models.IntegerField()
-    recommend_value = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'test_model'
-
-
 class TrainInfo(models.Model):
     id = models.IntegerField(primary_key=True)
     system_train_id = models.IntegerField()
-    train_name = models.CharField(max_length=100)
+    train_name = models.CharField(max_length=50)
     exam_id = models.IntegerField()
     course_id = models.IntegerField()
-    train_key = models.CharField(max_length=100)
+    train_key = models.CharField(max_length=50)
 
     class Meta:
         managed = False
@@ -247,7 +216,7 @@ class UserBasicInfo(models.Model):
     user_system_id = models.BigIntegerField(blank=True, null=True)
     points = models.IntegerField(blank=True, null=True)
     position = models.CharField(max_length=50, blank=True, null=True)
-    gender = models.CharField(max_length=10, blank=True, null=True)
+    gender = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -256,13 +225,13 @@ class UserBasicInfo(models.Model):
 
 class UserCourse(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    user = models.ForeignKey(UserBasicInfo, models.DO_NOTHING, blank=True, null=True)
-    course = models.ForeignKey(CourseInfo, models.DO_NOTHING, blank=True, null=True)
+    user_id = models.BigIntegerField(blank=True, null=True)
+    course_id = models.BigIntegerField(blank=True, null=True)
     learning_time = models.IntegerField(blank=True, null=True)
     click_times = models.IntegerField(blank=True, null=True)
-    score = models.CharField(max_length=255, blank=True, null=True)
-    collect_status = models.CharField(max_length=10, blank=True, null=True)
-    commit_status = models.CharField(max_length=255, blank=True, null=True)
+    score = models.CharField(max_length=50, blank=True, null=True)
+    collect_status = models.CharField(max_length=50, blank=True, null=True)
+    commit_status = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -270,11 +239,11 @@ class UserCourse(models.Model):
 
 
 class UserExam(models.Model):
-    id = models.IntegerField(primary_key=True)
-    exam_id = models.IntegerField()
-    user_id = models.IntegerField()
+    id = models.BigIntegerField(primary_key=True)
+    exam_id = models.BigIntegerField()
+    user_id = models.BigIntegerField()
     exam_submit_time = models.DateTimeField()
-    overtime_status = models.CharField(max_length=10)
+    overtime_status = models.CharField(max_length=50)
     score = models.IntegerField()
 
     class Meta:
@@ -284,11 +253,11 @@ class UserExam(models.Model):
 
 class UserLearningTime(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    user_course = models.ForeignKey(UserCourse, models.DO_NOTHING, blank=True, null=True)
-    course_key = models.CharField(max_length=100, blank=True, null=True)
+    user_course_id = models.BigIntegerField(blank=True, null=True)
+    course_key = models.CharField(max_length=50, blank=True, null=True)
     learning_total_time = models.IntegerField(blank=True, null=True)
     course_total_time = models.IntegerField(blank=True, null=True)
-    user = models.ForeignKey(UserBasicInfo, models.DO_NOTHING, blank=True, null=True)
+    user_id = models.BigIntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -300,7 +269,7 @@ class UserTask(models.Model):
     user_id = models.IntegerField()
     task_id = models.IntegerField()
     submit_datetime = models.DateTimeField()
-    overtime_status = models.CharField(max_length=10)
+    overtime_status = models.CharField(max_length=50)
     score = models.IntegerField()
 
     class Meta:
@@ -308,24 +277,11 @@ class UserTask(models.Model):
         db_table = 'user_task'
 
 
-class UserTest(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user_course_id = models.IntegerField()
-    test_content = models.CharField(max_length=100)
-    test_name = models.CharField(max_length=100)
-    test_id = models.IntegerField()
-    test_score = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'user_test'
-
-
 class UserTrain(models.Model):
     id = models.IntegerField(primary_key=True)
     user_id = models.IntegerField()
     train_id = models.IntegerField()
-    train_name = models.CharField(max_length=100)
+    train_name = models.CharField(max_length=50)
     train_start_time = models.DateTimeField()
     exam_id = models.IntegerField()
     train_time = models.IntegerField()

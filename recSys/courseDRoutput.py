@@ -1,7 +1,7 @@
-import pymysql
+import pymssql
 
 class DatabaseIo:
-    db = pymysql.connect("localhost", "root", "123456", "learningrecommend")
+    db = pymssql.connect("47.106.213.57", "sa", "ASElab905", "learningrecommend")
 
     def open(self):
         self.cursor = self.db.cursor()

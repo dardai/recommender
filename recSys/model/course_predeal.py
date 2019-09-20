@@ -1,14 +1,12 @@
 # 18级叶航-2019.8
 # 本代码主要实现对数据进行预处理，将结果写回数据库中
 
-import pymysql
-pymysql.install_as_MySQLdb()
 #先引入包名才能引入类
 from recSys import databaseIo
 
-info = {'address':'192.168.0.187',
-        'username':'root',
-        'passwd':'root123',
+info = {'servername':'47.106.213.57',
+        'username':'sa',
+        'passwd':'ASElab905',
         'basename':'learningrecommend'}
 
 ddio = databaseIo.DatabaseIo(info)
@@ -45,7 +43,7 @@ for row in result:
     userCourseList.append(list)
 
 #用于批量插入的插入语句
-sql_insert = """INSERT INTO course_dr(id, course_index, recommend_value)
+sql_insert = """INSERT INTO course_dr(user_id, course_index, recommend_value)
                     VALUES (%s, %s, %s)"""
 
 #新建一个列表，用于盛放元组的容器

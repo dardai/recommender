@@ -77,12 +77,15 @@ WSGI_APPLICATION = 'recommender.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'sql_server.pyodbc',
         'NAME': 'learningrecommend',
-        'USER': 'root',
-        'PASSWORD': 'root123',
-        'HOST': '192.168.0.187',
-        'PORT': '3306'
+        'USER': 'sa',
+        'PASSWORD': 'ASElab905',
+        'HOST': '47.106.213.57',
+        'PORT': '1433',
+        'OPTIONS': {
+            'driver': 'SQL Server Native Client 10.0'
+        }
     }
 }
 

@@ -1,10 +1,10 @@
-import databaseIo
+from recSys import databaseIo
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 import pandas as pd
 import numpy as nm
 import random
-import pymysql
+import pymssql
 
 # 定义将多条数据存入数据库操作
 '''
@@ -16,8 +16,7 @@ def insertData(db_name, table_name, data_list):
     def getcon(db_name):
         # host是选择连接哪的数据库localhost是本地数据库，port是端口号默认3306
         # user是使用的人的身份，root是管理员身份，passwd是密码。db是数据库的名称，charset是编码格式
-        conn = pymysql.connect(host="localhost", port=3306, user='root', passwd='114210', db=db_name,
-                                   charset='utf8')
+        conn = pymssql.connect("47.106.213.57", "sa", "ASElab905", "learningrecommend")
         # 创建游标对象
         cursor1 = conn.cursor()
         return conn, cursor1
@@ -56,9 +55,9 @@ def insertData(db_name, table_name, data_list):
 
 
 
-info = {'address':'localhost',
-        'username':'root',
-        'passwd':'114210',
+info = {'servername':'47.106.213.57',
+        'username':'sa',
+        'passwd':'ASElab905',
         'basename':'learningrecommend'}
 ddio = databaseIo.DatabaseIo(info)
 ddio.open()
