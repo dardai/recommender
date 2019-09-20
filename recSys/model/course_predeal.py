@@ -62,9 +62,6 @@ for i in range(len(userCourseList)):
 
 #将盛放了元组的列表再转换为元组，用于将大量数据批量插入到数据库
 tuple_collect = tuple(list_tuple)
-print(userCourseList)
-print('----------------')
-print(tuple_collect)
 
 # test_list = ((1019389160706723840, 1017291046411976704, 0.6), (1021585286373498880, 1052825830662688768, 0.5))
 
