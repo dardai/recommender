@@ -75,21 +75,29 @@ WSGI_APPLICATION = 'recommender.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
+#SQL server
 DATABASES = {
     'default': {
+        #修改配置
+        #'ENGINE': 'django.db.backends.mysql',
+        #'USER': 'root',
+        #'PASSWORD': 'root123',
+        #'HOST': '192.168.0.187',
+        #'PORT': '3306'
         'ENGINE': 'sql_server.pyodbc',
         'NAME': 'learningrecommend',
         'USER': 'administrator',
         'PASSWORD': 'ASElab905!',
         'HOST': '47.106.213.57',
         'PORT': '1433',
-        'OPTIONS': {
-            'driver': 'SQL Server Native Client 10.0',
-            'MARS_Connection': True ,
+        'OPTIONS':{
+            'driver':'SQL Server Native Client 10.0',
+            #进行sqlserver连接
+            'MARS_Connection': True,
         },
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -128,3 +136,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+#redis缓存
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379',
+        'OPTIONS': {
+            "CLTENT_CLASS": "django_redis.client.DefaultClient",
+
+        },
+    },
+}

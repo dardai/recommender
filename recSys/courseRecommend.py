@@ -1,5 +1,6 @@
 #周洋涛-2019.9
-#本代码实现了二部图算法，并用批量存储的方法将产生的推荐结果存入到course_model表中
+#本代码实现了二部图算法，并用批量存储的方法将产生的推荐结果存入到SQL server数据库中的course_model表中
+#import databaseIo
 from decimal import *
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
@@ -15,7 +16,7 @@ import pymysql
 # 定义将多条数据存入数据库操作
 '''
 输入：data_list存储的数据，以元组的形式传入参数格式如((1,2,3),(2,3,4),.....,(4,5,6))
-结果：将数据批量存入数据库
+结果：将数据批量存入SQL server数据库
 '''
 def insertData(data_list):
     #更改为SQL server数据库配置
