@@ -80,16 +80,16 @@ DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
         'NAME': 'learningrecommend',
-        'USER': 'sa',
-        'PASSWORD': 'ASElab905',
+        'USER': 'administrator',
+        'PASSWORD': 'ASElab905!',
         'HOST': '47.106.213.57',
         'PORT': '1433',
         'OPTIONS': {
-            'driver': 'SQL Server Native Client 10.0'
-        }
+            'driver': 'SQL Server Native Client 10.0',
+            'MARS_Connection': True ,
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
