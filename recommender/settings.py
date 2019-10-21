@@ -25,8 +25,9 @@ SECRET_KEY = 'rq=ur13ofmibka#w8mwqsz)9r)1jqd(i(=yv@!ga5-+1z++8jd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ALLOWED_HOSTS = ['*']
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -86,8 +87,8 @@ DATABASES = {
         #'PORT': '3306'
         'ENGINE': 'sql_server.pyodbc',
         'NAME': 'learningrecommend',
-        'USER': 'administrator',
-        'PASSWORD': 'ASElab905!',
+        'USER': 'sa',
+        'PASSWORD': 'ASElab905',
         'HOST': '47.106.213.57',
         'PORT': '1433',
         'OPTIONS':{
@@ -149,3 +150,13 @@ CACHES = {
         },
     },
 }
+
+
+#静态文件在生产环境的存储位置
+STATIC_ROOT = 'C:/share/recommend/recommender8/static/'
+#静态文件的URL
+STATIC_URL = '/static/'
+#Django应该在哪些位置寻找静态文件
+STATICFILES_DIRS = [(
+    os.path.join(BASE_DIR, "static")
+)]
