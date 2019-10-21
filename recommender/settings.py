@@ -151,7 +151,7 @@ CACHES = {
     },
 }
 
-
+#
 #静态文件在生产环境的存储位置
 STATIC_ROOT = 'C:/share/recommend/recommender8/static/'
 #静态文件的URL
