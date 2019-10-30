@@ -1,6 +1,7 @@
 #周洋涛-2019.9
 #本代码实现了二部图算法，并用批量存储的方法将产生的推荐结果存入到SQL server数据库中的course_model表中
 #import databaseIo
+import prettytable as pt
 from decimal import *
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
@@ -9,9 +10,15 @@ import numpy as nm
 import random
 import pymysql
 pymysql.install_as_MySQLdb()
+#添加项目路径，使项目可以在cmd上运行
+import sys
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
 #先引入包名才能引入类
 from recSys import databaseIo
 import pymysql
+
 
 # 定义将多条数据存入数据库操作
 '''
@@ -43,7 +50,7 @@ info = {'address':'47.106.213.57',
 ddio = databaseIo.DatabaseIo(info)
 ddio.open()
 sql_dr = """select *          from course_dr"""
-sql_course = """select id , system_course_id from course_info"""
+sql_course = """select id , system_course_id ,course_name from course_info"""
 sql_user = """select user_id from user_basic_info"""
 #读取course_dr的数据
 result_dr = ddio.read(sql_dr)
@@ -61,6 +68,7 @@ k = []
 for i1 in range(len(result_dr)):
     k.append(list(result_dr[i1]))
 result_list = []
+#print(k)
 #按course_id升序排序
 result_list = sorted(k, key=lambda z: z[1])
 #把从course_info中读取出来的数据以列表形式存储
@@ -69,7 +77,7 @@ for i2 in range(len(result_course)):
     b.append(list(result_course[i2]))
 result_list1 = []
 result_list1 = b
-
+#print(b)
 #读取user的id
 #把从user_basic_info中读取出来的数据以列表形式存储
 a = []
@@ -88,18 +96,23 @@ index = 0
 for row in range(len(result_list1)):
     course_mdic[int(result_list1[row][0])] = index
     index += 1
-#print('course_mdic')
+#print(index)
 #print(course_mdic)
-sorted(course_mdic,key=lambda x: course_mdic[x])
+#print(name_mdic)
+#sorted(course_mdic,key=lambda x: course_mdic[x])
 # 再建立反向字典
 course_mdicr = {0: 1}
 index = 0
 for key in course_mdic:
     course_mdicr[index] = key
     index += 1
-#print('course_mdicr')
 #print(course_mdicr)
 
+#读取推荐课程的名字
+def get_keys(value):
+    for row in result_list1:
+        if row[0] == value:
+            return row[2]
 
 # 建立字典，实现用户id和索引序号之间的映射，方便后续工作
 user_mdic = {1:0}
@@ -121,13 +134,13 @@ for key in user_mdic:
 #print(user_mdicr)
 
 
-
-
+# 创建所有已评价矩阵
+all_rated = nm.zeros([course_length, user_length])
 # 创建训练图矩阵
 graph = nm.zeros([course_length, user_length])
 # 创建测试图矩阵
 testGraph = nm.zeros([course_length, user_length])
-# 创建已评价矩阵
+# 创建训练集里已评价矩阵
 rated = nm.zeros([course_length, user_length])
 
 #提取出course_dr的数据
@@ -140,7 +153,15 @@ for j in range(range_length):
     result.append(w)
 #print('result')
 #print(result)
-
+learned = []
+for i6 in range(range_length):
+    tl = []
+    tl.append(k[i6][0])
+    tl.append(k[i6][1])
+    t = get_keys(k[i6][1])
+    # print(t)
+    tl.append(t)
+    learned.append(tl)
 
 # 读取course_dr的全部数据
 data = pd.DataFrame(result)
@@ -159,6 +180,7 @@ gg = 0.0
 for index, row in data.iterrows():
     if ((index + 1) in testIDs):
         testGraph[course_mdic[row[1]], int(row[0]) - 1] = 1
+        all_rated[course_mdic[row[1]], int(row[0]) - 1] = 1
         #print('------------------------')
         #print(testGraph[course_mdic[row[1]]][int(row[0]) - 1])
         #print(course_mdic[row[1]])
@@ -166,6 +188,7 @@ for index, row in data.iterrows():
         tg = tg +1
     else:
         rated[course_mdic[row[1]], int(row[0]) - 1] = 1
+        all_rated[course_mdic[row[1]], int(row[0]) - 1] = 1
         rg = rg + 1
 
         if (int(row[2]) >=  3.0):
@@ -224,12 +247,14 @@ locate = nm.matmul(weights, rated)
 recommend = []
 for i in range(len(locate)):
     for j in range(len(locate[i])):
-        data = []
-        data.append(j+1)
-        data.append(i+1)
-        data.append(locate[i][j])
-        temp_data = list(data)
-        recommend.append(temp_data)
+        #过滤掉用户已学习过的课程
+        if all_rated[i][j] != 1:
+            data = []
+            data.append(j+1)
+            data.append(i+1)
+            data.append(locate[i][j])
+            temp_data = list(data)
+            recommend.append(temp_data)
 #print('recommend')
 #print(recommend)
 recommend_result = []
@@ -240,15 +265,42 @@ for i5 in range(len(recommend)):
         po = []
         po.append(user_mdicr[recommend[i5][0] - 1])
         po.append(course_mdicr[recommend[i5][1] - 1])
+        #po.append(name_mdicr[recommend[i5][1] - 1])
+        t = get_keys(course_mdicr[recommend[i5][1] - 1])
+        #print(t)
+        po.append(t)
         #格式化推荐度的值
         po.append(Decimal(recommend[i5][2]).quantize(Decimal('0.00000')))
         tuple1 = tuple(po)
         recommend_result.append(tuple1)
 tuple2 = tuple(recommend_result)
-print(recommend_result)
-print(poo)
+#print(recommend_result)
+#myfile = open("data.txt",mode="w",encoding='utf-8')
+myfile = open("C:/share/recommend/recommender8/recSys/data.txt",mode="w",encoding='utf-8')
+result_data = sorted(recommend_result)
+myfile.write("user_id")
+myfile.write("   ")
+myfile.write("course_id")
+myfile.write("   ")
+myfile.write("course_name")
+myfile.write("   ")
+myfile.write("recommend_value")
+myfile.write("\n")
+for row in result_data:
+    myfile.write(str(row[0]))
+    myfile.write(" ")
+    myfile.write(str(row[1]))
+    myfile.write(" ")
+    myfile.write(str(row[2]))
+    myfile.write(" ")
+    myfile.write(str(row[3]))
+    myfile.write("\n")
+myfile.close()
+result_data = sorted(recommend_result,key = lambda x:x[0] and x[1])
+result_data = sorted(result_data,key = lambda x:x[3],reverse=True)
+#print(poo)
 #将产生的推荐结果以id, course_index, recommend_value存入数据库中的course_model表中
-insertData(tuple2)
+#insertData(tuple2)
 # 开始求预测的准确性
 rs = nm.zeros(user_length)
 
@@ -263,16 +315,34 @@ indiceLocate = nm.argsort(locate, axis=0)
 # 为方便后续处理，对结果进行转置
 testIndice = (indiceLocate * testGraph).T
 
+active = True
+while active:
+    user_id = input("请输入用户id：")
+    if user_id == "quit":
+        active = False
+    else:
+        ta = pt.PrettyTable()
+        ta.field_names = ["User_id", "Course_id", "Course_name"]
+        for row in learned:
+            if row[0] == int(user_id):
+                ta.add_row(row)
+        print("该用户已学习过的课程有：")
+        print(ta)
+        tb = pt.PrettyTable()
+        tb.field_names = ["User_id", "Course_id", "Course_name", "Recommend_value"]
+        for row in result_data:
+            if row[0] == int(user_id):
+                tb.add_row(row)
+        print("为该用户推荐学习的课程有：")
+        print(tb)
+
+
+
 # 求精确度的值
 usum = 0
 # 计算测试集中每部已评分电影的距离，并求均值
 for i in range(user_length):
     if (testGraph[:, i].sum() > 0):
         usum += ((testIndice[i]).sum() / (ls[i] * testGraph[:, i].sum()))
-print("the average value of r is:")
-print(usum / user_length)
-
-
-
-
-
+#print("the average value of r is:")
+#print(usum / user_length)

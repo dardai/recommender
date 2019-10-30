@@ -1,10 +1,16 @@
 # 18级叶航-2019.8
 # 本代码主要实现对数据进行预处理，将结果写回数据库中
 
+#添加项目路径，使项目可以在cmd上运行
+import sys
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
 #先引入包名才能引入类
-from recSys import databaseIo
+import databaseIo
 
-info = {'servername':'47.106.213.57',
+
+info = {'address':'47.106.213.57',
         'username':'sa',
         'passwd':'ASElab905',
         'basename':'learningrecommend'}
