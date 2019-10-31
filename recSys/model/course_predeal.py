@@ -4,7 +4,7 @@
 #先引入包名才能引入类
 from recSys import databaseIo
 
-info = {'servername':'47.106.213.57',
+info = {'address':'47.106.213.57',
         'username':'sa',
         'passwd':'ASElab905',
         'basename':'learningrecommend'}
@@ -45,6 +45,7 @@ for row in result:
 #用于批量插入的插入语句
 sql_insert = """INSERT INTO course_dr(user_id, course_index, recommend_value)
                     VALUES (%s, %s, %s)"""
+sql_delete = 'truncate table course_dr;'
 
 #新建一个列表，用于盛放元组的容器
 list_tuple = []
@@ -65,6 +66,7 @@ tuple_collect = tuple(list_tuple)
 
 # test_list = ((1019389160706723840, 1017291046411976704, 0.6), (1021585286373498880, 1052825830662688768, 0.5))
 
+ddio.write(sql_delete)
 ddio.writeMany(sql_insert, tuple_collect)
 
 ddio.close()
