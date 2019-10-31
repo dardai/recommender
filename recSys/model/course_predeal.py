@@ -7,7 +7,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 #先引入包名才能引入类
-from recSys import databaseIo
+import databaseIo
 
 info = {'address':'47.106.213.57',
         'username':'sa',
