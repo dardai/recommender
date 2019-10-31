@@ -1,13 +1,12 @@
-import pymssql
-
-import pymysql
 import traceback
+import pymssql#sqlserver的包
 class DatabaseIo:
 
     def __init__(self, info:dict):
-        self.info = {'servername':info['servername'],'username':info['username'],'passwd':info['passwd'],'basename':info['basename']}
+        self.info = {'address':info['address'],'username':info['username'],'passwd':info['passwd'],'basename':info['basename']}
 
     def open(self):
+        #SQL server数据库的配置信息
         self.db = pymssql.connect("47.106.213.57", "sa", "ASElab905", "learningrecommend")
         self.cursor = self.db.cursor()
 

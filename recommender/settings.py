@@ -25,8 +25,9 @@ SECRET_KEY = 'rq=ur13ofmibka#w8mwqsz)9r)1jqd(i(=yv@!ga5-+1z++8jd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ALLOWED_HOSTS = ['*']
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -75,18 +76,26 @@ WSGI_APPLICATION = 'recommender.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
+#SQL server
 DATABASES = {
     'default': {
+        #修改配置
+        #'ENGINE': 'django.db.backends.mysql',
+        #'USER': 'root',
+        #'PASSWORD': 'root123',
+        #'HOST': '192.168.0.187',
+        #'PORT': '3306'
         'ENGINE': 'sql_server.pyodbc',
         'NAME': 'learningrecommend',
         'USER': 'sa',
         'PASSWORD': 'ASElab905',
         'HOST': '47.106.213.57',
         'PORT': '1433',
-        'OPTIONS': {
-            'driver': 'SQL Server Native Client 10.0'
-        }
+        'OPTIONS':{
+            'driver':'SQL Server Native Client 10.0',
+            #进行sqlserver连接
+            'MARS_Connection': True,
+        },
     }
 }
 
@@ -128,3 +137,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+#redis缓存
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379',
+        'OPTIONS': {
+            "CLTENT_CLASS": "django_redis.client.DefaultClient",
+
+        },
+    },
+}
+
+#
+#静态文件在生产环境的存储位置
+STATIC_ROOT = 'C:/share/recommend/recommender8/static/'
+#静态文件的URL
+STATIC_URL = '/static/'
+#Django应该在哪些位置寻找静态文件
+STATICFILES_DIRS = [(
+    os.path.join(BASE_DIR, "static")
+)]
