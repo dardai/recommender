@@ -18,7 +18,11 @@ sys.path.append(BASE_DIR)
 #先引入包名才能引入类
 from recSys import databaseIo
 import pymysql
-
+#引入pyspark的相关包
+from pyspark import SparkContext
+from pyspark.mllib.linalg import Matrix
+from pyspark.mllib.linalg.distributed import RowMatrix,DenseMatrix
+from tkinter import  _flatten
 
 # 定义将多条数据存入数据库操作
 '''
@@ -40,6 +44,52 @@ def insertData(data_list):
                         VALUES (%s, %s, %s)"""
     ddio.writeMany(sql_insert,tuple(data_list))
     ddio.close()
+
+"""
+输入：由pysaprk中的行矩阵rdd转换成的列表，形如[ DenseMatrix[1,1,1], DenseMatrix[1,1,1], DenseMatrix[1,1,1] ]
+返回：转换成功的列表，形如[ [1,1,1], [1,1,1], [1,1,1] ]
+"""
+def transtomatrix(p):
+    f = []
+    for i in range(len(p)):
+        temp = []
+        temp = list(p[i])
+        f.append(temp)
+    #print(f)
+    return(f)
+
+
+"""
+输入：要进行矩阵乘法运算的c和d数组，rlength是数组矩阵d的行数，clength是数组矩阵d的列数
+返回：实现矩阵乘法的结果矩阵
+注意：返回的结果矩阵是numpy.matrix类型，但二部图中定义的矩阵都是numpy.array类型，要对函数返回的结果进行类型转换
+"""
+def SparkMultiply(c,d,rlength,clength):
+    #将d数组里的所有行数组合并成一个大数组
+    b2 = _flatten(d.tolist())
+    #设置spark相关参数
+    sc = SparkContext('local','tests')
+    #进行并行化
+    t1 = sc.parallelize(c.tolist())
+    #t2 = sc.parallelize(d)
+    #创建行矩阵
+    m1 = RowMatrix(t1)
+    #创建密集矩阵，由于pyspark中的矩阵都是按列存储，所以这里参数设置为True使得矩阵创建时与numpy一样按行存储
+    m2 = DenseMatrix(rlength,clength,list(b2),True)
+    #调用pyspark中的矩阵乘法，注意这里的m2一定要对应输入时的d数据矩阵
+    mat = m1.multiply(m2)
+    #print(mat.rows.collect())
+    #下面两行代码实现将RDD类型转换成列表类型
+    k = mat.rows.collect()
+    q = transtomatrix(k)
+    #结束并行化
+    sc.stop()
+    #print(q)
+    return q
+
+
+
+
 
 
 #更改为SQL server
@@ -235,12 +285,14 @@ gt = graph.T
 temp = nm.zeros([user_length, course_length])
 for i in range(course_length):
     temp[:,i] = gt[:,i] / kls
-temp = nm.dot(graph, temp)
+#temp = nm.dot(graph, temp)
+temp = nm.array(SparkMultiply(graph,temp,user_length,course_length))
 for i in range(course_length):
     weights[i, :] = temp[i, :] / kjs
 
 # 求各个用户的资源分配矩阵
-locate = nm.matmul(weights, rated)
+#locate = nm.matmul(weights, rated)
+locate = nm.array(SparkMultiply(weights,rated,course_length,user_length))
 #print('locate')
 #print(locate)
 #将算法产生的推荐结果以列表形式存储
@@ -256,7 +308,7 @@ for i in range(len(locate)):
             temp_data = list(data)
             recommend.append(temp_data)
 #print('recommend')
-#print(recommend)
+#252963043984print(recommend)
 recommend_result = []
 poo = 0.0
 for i5 in range(len(recommend)):
@@ -276,7 +328,8 @@ for i5 in range(len(recommend)):
 tuple2 = tuple(recommend_result)
 #print(recommend_result)
 #myfile = open("data.txt",mode="w",encoding='utf-8')
-myfile = open("C:/share/recommend/recommender8/recSys/data.txt",mode="w",encoding='utf-8')
+#myfile = open("C:/share/recommend/recommender8/recSys/data.txt",mode="w",encoding='utf-8')
+myfile = open("D:/python程序/PycharmProjects/recommend/recommender8/recSys/data.txt",mode="w",encoding='utf-8')
 result_data = sorted(recommend_result)
 myfile.write("user_id")
 myfile.write("   ")
@@ -311,7 +364,7 @@ indiceLocate = nm.argsort(locate, axis=0)
 #print('indicelocate')
 #print(indiceLocate)
 
-# 通过矩阵乘法得到测试集的排名数据
+# 通过矩阵对应元素相乘得到测试集的排名数据
 # 为方便后续处理，对结果进行转置
 testIndice = (indiceLocate * testGraph).T
 
@@ -344,5 +397,5 @@ usum = 0
 for i in range(user_length):
     if (testGraph[:, i].sum() > 0):
         usum += ((testIndice[i]).sum() / (ls[i] * testGraph[:, i].sum()))
-#print("the average value of r is:")
-#print(usum / user_length)
+print("the average value of r is:")
+print(usum / user_length)
