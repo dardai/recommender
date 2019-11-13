@@ -1,5 +1,5 @@
 import traceback
-import pymssql#sqlserver的包
+import pymysql
 class DatabaseIo:
 
     def __init__(self, info:dict):
@@ -7,7 +7,7 @@ class DatabaseIo:
 
     def open(self):
         #SQL server数据库的配置信息
-        self.db = pymssql.connect("47.106.213.57", "sa", "ASElab905", "learningrecommend")
+        self.db = pymysql.connect("39.100.100.198", "root", "ASElab905", "learningrecommend")
         self.cursor = self.db.cursor()
 
     def write(self, sql):

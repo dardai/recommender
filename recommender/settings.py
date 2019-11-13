@@ -79,26 +79,14 @@ WSGI_APPLICATION = 'recommender.wsgi.application'
 #SQL server
 DATABASES = {
     'default': {
-        #修改配置
-        #'ENGINE': 'django.db.backends.mysql',
-        #'USER': 'root',
-        #'PASSWORD': 'root123',
-        #'HOST': '192.168.0.187',
-        #'PORT': '3306'
-        'ENGINE': 'sql_server.pyodbc',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'learningrecommend',
-        'USER': 'sa',
+        'USER': 'root',
         'PASSWORD': 'ASElab905',
-        'HOST': '47.106.213.57',
-        'PORT': '1433',
-        'OPTIONS':{
-            'driver':'SQL Server Native Client 10.0',
-            #进行sqlserver连接
-            'MARS_Connection': True,
-        },
+        'HOST': '39.100.100.198',
+        'PORT': '3306'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
