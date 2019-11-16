@@ -93,8 +93,8 @@ def SparkMultiply(c,d,rlength,clength):
 
 
 #更改为SQL server
-info = {'address':'47.106.213.57',
-        'username':'sa',
+info = {'address':'39.100.100.198',
+        'username':'root',
         'passwd':'ASElab905',
         'basename':'learningrecommend'}
 ddio = databaseIo.DatabaseIo(info)
